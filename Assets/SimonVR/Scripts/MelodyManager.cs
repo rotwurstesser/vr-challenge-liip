@@ -7,11 +7,16 @@ public class MelodyManager : MonoBehaviour
 {
 
 	private System.Random randomizer = new System.Random();
+	private bool playing = false;
+	private double nextEventTime;
+	private int currentNoteIndex = 0;
+	private int note = 0;
+
 
 	// Melody sequence
 	public List<int> theMelody = new List<int>();
 
-	// Mapping of notes to walls
+	// Mapping of notes to walls (to the wall's AudioSource)
 	public AudioSource[] noteToWall;
 
 	// Start is called before the first frame update
@@ -23,10 +28,28 @@ public class MelodyManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		if (Input.GetButtonDown("Fire1"))
+		if (Input.GetButtonDown("Fire1") & !playing)
 		{
-			playMelody();
-			addToMelody();
+			playing = true;
+			nextEventTime = AudioSettings.dspTime + 0.2d;
+		}
+
+		double time = AudioSettings.dspTime;
+
+		if (time > nextEventTime & playing)
+		{
+			note = theMelody[currentNoteIndex];
+			//noteToWall[note].PlayScheduled(nextEventTime);
+			noteToWall[note].Play();
+			//Debug.Log(note + " at " + nextEventTime);
+			currentNoteIndex++;
+			nextEventTime = AudioSettings.dspTime + 0.4d;
+			if (currentNoteIndex > theMelody.Count-1)
+			{
+				addToMelody();
+				currentNoteIndex = 0;
+				playing = false;
+			}
 		}
     }
 
@@ -36,15 +59,4 @@ public class MelodyManager : MonoBehaviour
 	}
 
 	void clearMelody() => theMelody.Clear();
-
-	// TODO: Problem with scheduling the same audio source twice (not working)
-	void playMelody()
-	{
-		double nextEventTime = AudioSettings.dspTime + 1.0f;
-		foreach(int note in theMelody)
-		{
-			nextEventTime = nextEventTime + 0.8f;
-			noteToWall[note].PlayScheduled(nextEventTime);
-		}
-	}
 }

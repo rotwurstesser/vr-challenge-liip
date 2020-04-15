@@ -243,7 +243,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   theMelody: 
-  noteToWall:
+  noteToWallAudio:
   - {fileID: 1666241108}
   - {fileID: 1815451321}
   - {fileID: 1358296629}

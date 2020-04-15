@@ -18,6 +18,12 @@ public class MelodyManager : MonoBehaviour
 	// Mapping of the melody notes (0-5) to walls (to the wall's AudioSource). The mapping is done in the Inspector in Unity.
 	public AudioSource[] noteToWallAudio;
 
+	// Variables for making the spot light point at the wall emitting the note
+	private Transform targetWall;
+	public float lightPointingSpeed;
+	private Quaternion targetRotation;
+	public Transform pointingLight;
+
 	// Start is called before the first frame update
 	void Start()
     {
@@ -45,6 +51,10 @@ public class MelodyManager : MonoBehaviour
 			currentNoteIndex++;
 			nextNotePlayTime = AudioSettings.dspTime + 0.4d;
 
+			// set the target wall for the spot light
+			var soundEmittingWall = noteToWallAudio[note].gameObject.transform;
+			targetRotation = Quaternion.LookRotation(soundEmittingWall.position - pointingLight.position);
+
 			// when last note of melody is reached, stop playing, reset melody cursor and add a not to the melody (this one is also for testing purposes only)
 			if (currentNoteIndex > theMelody.Count-1)
 			{
@@ -53,7 +63,12 @@ public class MelodyManager : MonoBehaviour
 				addToMelody();
 			}
 		}
-    }
+
+		// rotate the pointing light an increment in the direction of the waa that currently emits the note
+		var str = Mathf.Min(lightPointingSpeed * Time.deltaTime, 1);
+		pointingLight.rotation = Quaternion.Lerp(pointingLight.rotation, targetRotation, str);
+
+	}
 
 	// Append one random note to the melody
 	void addToMelody()

@@ -37,6 +37,7 @@ public class MelodyManager : MonoBehaviour
 
 		double time = AudioSettings.dspTime;
 
+		// We don't want to play a note at each frame (60 FPS!), but only when the note is scheduled (or very shortly thereafter) by nextNotePlayTime
 		if (time > nextNotePlayTime & playMelody)
 		{
 			int note = theMelody[currentNoteIndex];
@@ -57,7 +58,7 @@ public class MelodyManager : MonoBehaviour
 	// Append one random note to the melody
 	void addToMelody()
 	{
-		theMelody.Add(randomizer.Next(0, 5));
+		theMelody.Add(randomizer.Next(0, 6));
 	}
 
 	void clearMelody() => theMelody.Clear();
